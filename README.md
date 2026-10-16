@@ -7,6 +7,7 @@ Yêu cầu:
   Gitbash: https://git-scm.com/install/windows
 
 Quy trình tổng quát:
+
   0. Clone Repo
 
   1. Kiểm tra Python, Git và VS Code
@@ -25,7 +26,7 @@ Quy trình tổng quát:
     Tại trang chính của Repo > + Code > copy HTTPS 
     >> Sau đó, mở cmd, cd [Thư mục muốn chứa Repo]
     >> git clone "link vừa mới tạo"
-    
+
 
   ## Bước 1. Kiểm tra Python và Git
     - Mở VS Code, chọn Terminal → New Terminal.
