@@ -28,7 +28,7 @@ Quy trình tổng quát:
         
         cd [Thư mục muốn chứa Repo]
 
-        git clone "link vừa mới tạo"
+        git clone "link HTTPS vừa mới copy"
 
 
   ## Bước 1. Kiểm tra Python và Git
