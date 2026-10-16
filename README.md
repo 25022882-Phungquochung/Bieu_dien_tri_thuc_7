@@ -24,8 +24,11 @@ Quy trình tổng quát:
 
   ## Bước 0. Clone Repo
     Tại trang chính của Repo > + Code > copy HTTPS 
-    >> Sau đó, mở cmd, cd [Thư mục muốn chứa Repo]
-    >> git clone "link vừa mới tạo"
+    >> Sau đó, mở cmd, viết từng dòng một: 
+        
+        cd [Thư mục muốn chứa Repo]
+
+        git clone "link vừa mới tạo"
 
 
   ## Bước 1. Kiểm tra Python và Git
