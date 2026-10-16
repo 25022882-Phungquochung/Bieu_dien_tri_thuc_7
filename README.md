@@ -1,3 +1,142 @@
+# Hướng dẫn setup Github để dùng Repo và Commit trực tiếp từ Terminal qua HTTPS: 
+
+Link Repo HTTPS: https://github.com/25022882-Phungquochung/Bieu_dien_tri_thuc_7.git
+
+Yêu cầu: 
+  VSCode: https://code.visualstudio.com/download?_exp_download=d53503e735
+  Gitbash: https://git-scm.com/install/windows
+
+Quy trình tổng quát:
+  1. Kiểm tra Python, Git và VS Code
+
+  2. Mở đúng repository đã clone
+
+  3. Cấu hình tên và email Git
+
+  4. Tạo và chạy nhap_Hung.py
+
+  5. git add → git commit
+
+  6. Xác thực GitHub và git push
+
+
+  ## Bước 1. Kiểm tra Python và Git
+    - Mở VS Code, chọn Terminal → New Terminal.
+    - Trong terminal, kiểm tra Git:
+      git --version
+
+    - Kiểm tra Python:
+      python --version
+
+
+    - Nếu lệnh python không hoạt động, thử:
+      py --version
+
+  ## Bước 2. Mở đúng repository trong VS Code
+    - Vì bạn đã clone repo, không cần clone lại và không cần chạy git init.
+    Trong VS Code, chọn File → Open Folder..., rồi mở thư mục ban nãy đã clone repo, 
+    VD: C:\Users\a\Documents\Code python\Bieu_dien_tri_thuc_7
+    - Sau đó chạy:
+      git status
+      git remote -v
+
+
+    - git status: kiểm tra tình trạng file.
+    - git remote -v: kiểm tra repository GitHub mà thư mục này đang kết nối.
+  Bạn cần thấy remote origin trỏ tới repository Bieu_dien_tri_thuc_7 hoặc main của mình. Nếu đúng, tiếp tục bước 3.
+
+  ## Bước 3. Cấu hình tên và email Git (chỉ cần làm một lần)
+    - Git cần biết ai là tác giả của các commit. Trong terminal, nhập:
+    - git config --global user.name "25022882-TEN_CUA_BAN"
+    - git config --global user.email "EMAIL_CUA_BAN"
+
+
+    Thay EMAIL_CUA_BAN bằng email đã xác minh trên GitHub. Bạn cũng có thể dùng địa chỉ noreply của GitHub nếu muốn giữ riêng email cá nhân; xem địa chỉ đó tại GitHub → Settings → Emails.
+    - Kiểm tra lại:
+      git config --global user.name
+      git config --global user.email
+
+  ## Bước 4. Tạo file nhap_TEN.py ( mỗi thành viên tạo 1 file và tự commit để xác nhận commit thành công)
+    Trong VS Code, ở khung Explorer bên trái:
+    1. Chọn thư mục gốc Bieu_dien_tri_thuc_7.
+    2. Nhấn biểu tượng New File.
+    3. Đặt tên chính xác là nhap_TEN.py. VD: nhap_Hung.py
+    4. Nhập đoạn code sau và lưu bằng Ctrl + S.
+      print("Hello")
+
+  ## Bước 5. Chạy thử file Python
+  Trong terminal VS Code, chạy:
+    python nhap_TEN.py
+
+  Nếu lệnh python không hoạt động nhưng py --version chạy được, dùng:
+  py nhap_Hung.py
+
+  ## Bước 6. Đưa file vào Git và tạo commit
+    - Đầu tiên, kiểm tra Git có nhận ra file mới hay không:
+      git status
+
+
+    ### 6.1. Đưa file vào vùng staging
+      git add nhap_TEN.py
+
+
+      Kiểm tra:
+        git status
+
+
+    Bây giờ file sẽ nằm trong nhóm Changes to be committed.
+    ### 6.2. Tạo commit
+      git commit -m "Add nhap_Hung.py"
+
+
+      Nếu thành công, Git sẽ báo một file mới được tạo, tương tự:
+        [main abc1234] Add nhap_Hung.py
+        1 file changed, 4 insertions(+)
+        create mode 100644 nhap_Hung.py
+
+
+      Mã abc1234 chỉ là ví dụ; mã thực tế trên máy bạn sẽ khác.
+    NOTE: Bạn cần nhớ: git add chuẩn bị thay đổi, git commit lưu phiên bản vào lịch sử Git trên máy. Chưa có bước nào ở đây tải file lên GitHub cả.
+
+  ## Bước 7. Đăng nhập và push lên GitHub
+    - Vì bạn đang dùng HTTPS, trước tiên hãy chạy:
+      git push
+
+
+    - Nếu đây là lần push đầu tiên của nhánh hiện tại và Git yêu cầu thiết lập upstream, hãy chạy:
+      git push -u origin HEAD
+
+
+    ### Có hai tình huống xác thực thường gặp:
+    Trường hợp A — Git mở trình duyệt để đăng nhập
+  Đăng nhập tài khoản GitHub, xác nhận cấp quyền nếu được hỏi, rồi quay lại VS Code. Nếu push hoàn tất, bạn không cần nhập PAT thủ công.
+
+
+    Trường hợp B — Git yêu cầu username và password
+  - Username: tên tài khoản GitHub.
+  - Password: dán Personal Access Token (PAT) bạn đã tạo, không phải mật khẩu tài khoản.
+  Khi dán token trong terminal, ký tự có thể không hiển thị. Đây là điều bình thường.
+
+  ## Bước 8. Kiểm tra kết quả trên GitHub
+    - Mở repository:
+    - Mở repository Bieu_dien_tri_thuc_7 trên GitHubLàm mới trang và tìm file nhap_TEN.py. Nếu file xuất hiện với nội dung bạn vừa viết, bạn đã hoàn thành toàn bộ quy trình!
+  
+  ## Tổng hợp các lệnh bạn sẽ dùng thường xuyên
+  Sau khi đã thiết lập Python, Git và thông tin đăng nhập, mỗi lần bạn tạo hoặc sửa code, quy trình cơ bản sẽ là:
+
+    ### 1. Kiểm tra thay đổi
+    git status
+
+    ### 2. Chọn file muốn đưa vào commit
+    git add nhap_TEN.py
+
+    ### 3. Lưu phiên bản trên máy
+    git commit -m "Add nhap_TEN.py"
+
+    ### 4. Đẩy commit lên GitHub
+    git push
+
+
 # 2048 AI Midterm
 
 Project giữa kỳ xây dựng thuật toán chơi **2048 chuẩn trên bàn 4×4**. Sinh viên
