@@ -23,11 +23,6 @@ class Agent:
     # Đổi tên này thành tên đội; nó sẽ xuất hiện trong UI và file kết quả.
     name = "nhom_7"
 
-    def __init__(self) -> None:
-        # Benchmark có thể đọc hai thuộc tính này sau mỗi lượt; hiện agent chưa cập nhật chúng.
-        self.last_nodes = 0
-        self.last_completed_depth = 0
-
     def reset(self, seed: int | None = None) -> None:
         """Đặt lại thống kê giữa các ván.
 
