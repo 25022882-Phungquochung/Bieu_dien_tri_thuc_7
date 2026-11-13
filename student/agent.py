@@ -33,6 +33,7 @@ class Agent:
         HS_O_TRONG = 30  # thưởng ô trống
         HS_DON_DIEU = 22    # phạt đơn điệu
         HS_DO_MUOT = 1.2  # phạt độ mượt
+        HS_O_GOC = 40  # thưởng ô góc
 
         # Đổi giá trị ô thành số mũ cuar 2:
         log2_board = np.zeros(board.shape)
@@ -55,16 +56,29 @@ class Agent:
         # Càng nhiều ô trống thì càng có chỗ cho các nước đi tiếp.
         o_trong = np.count_nonzero(board == 0)
 
+        # Ô góc là giá trị ô lớn nhất nếu nó nằm ở một trong 4 góc; nếu không thì 0.
+        max_tile = int(board.max())
+        o_goc = max_tile > 0 and max_tile in (
+            board[0, 0], board[0, -1], board[-1, 0], board[-1, -1]
+        )
+        o_goc = np.log2(max_tile) if o_goc else 0
+
         # Điểm heuristic cao hơn được xem là trạng thái tốt hơn.
-        return HS_O_TRONG * o_trong - HS_DON_DIEU * don_dieu - HS_DO_MUOT * do_muot + merge_score
+        return (
+            HS_O_TRONG * o_trong
+            - HS_DON_DIEU * don_dieu
+            - HS_DO_MUOT * do_muot
+            + HS_O_GOC * o_goc
+            + merge_score
+        )
 
     def choose_move(agent7, obs: Observation, time_limit_ms: float) -> Move:
         # Không thể chọn nước đi nếu trạng thái hiện tại không còn nước hợp lệ.
         if not obs.legal_moves:
             raise ValueError("choose_move được gọi ở trạng thái kết thúc")
 
-        # Chỉ dùng tối đa 80% thời gian được cấp và giới hạn mỗi lượt tìm kiếm ở 50 ms.
-        move_budget_ms = min(50.0, max(0.0, time_limit_ms) * 0.8)
+        # Chỉ dùng tối đa 80% thời gian được cấp và giới hạn mỗi lượt tìm kiếm ở 30 ms.
+        move_budget_ms = min(35.0, max(0.0, time_limit_ms) * 0.8)
         # Đổi ngân sách từ mili giây sang giây để so sánh với đồng hồ hiệu năng.
         deadline = time.perf_counter() + move_budget_ms / 1000.0
 
@@ -114,8 +128,7 @@ class Agent:
         # Mặc định chọn nước hợp lệ đầu tiên để luôn có phương án trả về.
         best_move = obs.legal_moves[0]
 
-        # Tìm kiếm tăng dần độ sâu; nếu hết giờ thì giữ kết quả từ độ sâu trước.
-        for depth in (1, 2):
+        for depth in range(1, 4):
             try:
                 best_value = float("-inf")
                 candidate = best_move
@@ -127,7 +140,7 @@ class Agent:
 
                     if value > best_value:
                         candidate, best_value = move, value
-                        
+
             except _SearchTimeout:
                 break
             best_move = candidate
