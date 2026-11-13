@@ -23,7 +23,7 @@ class Agent:
     # Đổi tên này thành tên đội; nó sẽ xuất hiện trong UI và file kết quả.
     name = "nhom_7"
 
-    def reset(self, seed: int | None = None) -> None:
+    def reset(agent7, seed: int | None = None) -> None:
         """Đặt lại thống kê giữa các ván.
 
         seed được truyền theo API AgentProtocol trong interfaces.py và từ benchmark.py.
@@ -63,53 +63,70 @@ class Agent:
         # Điểm heuristic cao hơn được xem là trạng thái tốt hơn.
         return HS_O_TRONG * o_trong - HS_DON_DIEU * don_dieu - HS_DO_MUOT * do_muot + merge_score
 
-    def choose_move(self, obs: Observation, time_limit_ms: float) -> Move:
+    def choose_move(agent7, obs: Observation, time_limit_ms: float) -> Move:
+        # Không thể chọn nước đi nếu trạng thái hiện tại không còn nước hợp lệ.
         if not obs.legal_moves:
             raise ValueError("choose_move được gọi ở trạng thái kết thúc")
 
+        # Chỉ dùng tối đa 80% thời gian được cấp và giới hạn mỗi lượt tìm kiếm ở 50 ms.
         move_budget_ms = min(50.0, max(0.0, time_limit_ms) * 0.8)
-        UET_deadline_nhung_chua_lam = time.perf_counter() + move_budget_ms / 1000.0
+        # Đổi ngân sách từ mili giây sang giây để so sánh với đồng hồ hiệu năng.
+        deadline = time.perf_counter() + move_budget_ms / 1000.0
 
         def player_value(board, depth):
-
+            # Đến độ sâu giới hạn thì ước lượng giá trị bàn cờ thay vì tìm tiếp.
             if depth <= 0:
-                return self.evaluate(board, 0)
+                return agent7.evaluate(board, 0)
+
+            # Lượt của người chơi: thử mọi hướng và giữ giá trị tốt nhất.
             best = float("-inf")
 
             for move in Move:
                 after, score, changed = move_board(board, move)
 
+                # Chỉ xét các hướng thực sự làm thay đổi bàn cờ.
                 if changed:
                     best = max(best, chance_value(after, depth, score))
 
-            return best if best != float("-inf") else self.evaluate(board, 0) - 1000.0
+            # Nếu không hướng nào hợp lệ, xem đây là trạng thái bất lợi.
+            return best if best != float("-inf") else agent7.evaluate(board, 0) - 1000.0
 
         def chance_value(after, depth, score):
-            
-            if time.perf_counter() >= UET_deadline_nhung_chua_lam:
+
+            # Dừng tìm kiếm khi hết ngân sách thời gian.
+            if time.perf_counter() >= deadline:
                 raise _SearchTimeout
-            
+
+            # Liệt kê các ô trống, nơi ô mới có thể xuất hiện ngẫu nhiên.
             o_trong = np.argwhere(after == 0)
+
+            # Nếu không còn ô trống, không thể sinh ô mới; tiếp tục lượt kế tiếp.
             if len(o_trong) == 0:
                 return score + player_value(after, depth - 1)
-            
+
+            # Tính giá trị kỳ vọng trên mọi vị trí và loại ô có thể được sinh.
             total = 0.0
 
             for r, c in o_trong:
+                # Ô 2 xuất hiện với xác suất 90%, ô 4 với xác suất 10%.
                 for tile, prob in ((2, 0.9), (4, 0.1)):
                     spawned = after.copy()
                     spawned[r, c] = tile
                     total += prob * player_value(spawned, depth - 1)
 
+            # Các vị trí trống có khả năng như nhau nên lấy trung bình theo số ô.
             return score + total / len(o_trong)
 
+        # Mặc định chọn nước hợp lệ đầu tiên để luôn có phương án trả về.
         best_move = obs.legal_moves[0]
 
+        # Tìm kiếm tăng dần độ sâu; nếu hết giờ thì giữ kết quả từ độ sâu trước.
         for depth in (1, 2):
             try:
                 best_value = float("-inf")
                 candidate = best_move
 
+                # Đánh giá từng nước hợp lệ và lưu nước có giá trị cao nhất.
                 for move in obs.legal_moves:
                     after, score, _ = move_board(obs.board, move)
                     value = chance_value(after, depth, score)
@@ -121,4 +138,5 @@ class Agent:
                 break
             best_move = candidate
             
+        # Trả về nước tốt nhất tìm được trong giới hạn thời gian.
         return best_move
