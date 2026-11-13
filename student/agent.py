@@ -32,7 +32,7 @@ class Agent:
         # board là bàn sau mô phỏng; merge_score là điểm nước vừa gộp (từ move_board).
         HS_O_TRONG = 30  # thưởng ô trống
         HS_DON_DIEU = 22    # phạt đơn điệu
-        HS_DO_MUOT = 1.2  # phạt độ mượt
+        HS_DO_MUOT = 0.12  # phạt độ mượt
         HS_O_GOC = 40  # thưởng ô góc
 
         # Đổi giá trị ô thành số mũ cuar 2:
@@ -77,8 +77,8 @@ class Agent:
         if not obs.legal_moves:
             raise ValueError("choose_move được gọi ở trạng thái kết thúc")
 
-        # Chỉ dùng tối đa 80% thời gian được cấp và giới hạn mỗi lượt tìm kiếm ở 30 ms.
-        move_budget_ms = min(35.0, max(0.0, time_limit_ms) * 0.8)
+        # Chỉ dùng tối đa 50% thời gian được cấp và giới hạn mỗi lượt tìm kiếm ở 30 ms.
+        move_budget_ms = min(30.0, max(0.0, time_limit_ms) * 0.5)
         # Đổi ngân sách từ mili giây sang giây để so sánh với đồng hồ hiệu năng.
         deadline = time.perf_counter() + move_budget_ms / 1000.0
 
