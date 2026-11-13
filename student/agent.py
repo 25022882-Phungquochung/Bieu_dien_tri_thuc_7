@@ -16,7 +16,7 @@ from game2048.types import Move
 
 class _SearchTimeout(Exception):
     """Dừng một tầng tìm kiếm chưa hoàn tất khi sắp hết ngân sách."""
-    # Hiện tại choose_move chưa dùng ngoại lệ này để dừng tìm kiếm.
+    #Đặt tên cho exception này để dễ nhận biết trong khối try/except của choose_move.
 
 
 class Agent:
@@ -24,22 +24,17 @@ class Agent:
     name = "nhom_7"
 
     def reset(agent7, seed: int | None = None) -> None:
-        """Đặt lại thống kê giữa các ván.
-
-        seed được truyền theo API AgentProtocol trong interfaces.py và từ benchmark.py.
-        Agent không có RNG riêng: engine (engine.py/rng.py) dùng seed để sinh ô.
-        """
-        # Giữ tham số seed để đúng API chung; agent hiện không cần dùng nó.
         _ = seed
+
     @staticmethod
     def evaluate(board: np.ndarray, merge_score: int) -> float:
-        # Heuristic tự viết trong class Agent, không lấy từ module heuristic.py.
+
         # board là bàn sau mô phỏng; merge_score là điểm nước vừa gộp (từ move_board).
         HS_O_TRONG = 30  # thưởng ô trống
         HS_DON_DIEU = 22    # phạt đơn điệu
         HS_DO_MUOT = 1.2  # phạt độ mượt
 
-        # Đổi giá trị ô thành số mũ: 2 -> 1, 4 -> 2, 8 -> 3; ô trống giữ 0.
+        # Đổi giá trị ô thành số mũ cuar 2:
         log2_board = np.zeros(board.shape)
         log2_board[board > 0] = np.log2(board[board > 0])
 
@@ -104,7 +99,6 @@ class Agent:
             if len(o_trong) == 0:
                 return score + player_value(after, depth - 1)
 
-            # Tính giá trị kỳ vọng trên mọi vị trí và loại ô có thể được sinh.
             total = 0.0
 
             for r, c in o_trong:
@@ -137,6 +131,4 @@ class Agent:
             except _SearchTimeout:
                 break
             best_move = candidate
-            
-        # Trả về nước tốt nhất tìm được trong giới hạn thời gian.
         return best_move
